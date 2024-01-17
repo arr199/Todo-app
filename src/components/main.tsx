@@ -1,57 +1,68 @@
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, SafeAreaView } from 'react-native'
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Keyboard } from 'react-native'
 import Task from './task'
 import { useState } from 'react'
-import API from '../utils/API'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import 'react-native-get-random-values'
-import { nanoid } from 'nanoid'
-
-interface TTask {
-  id: string
-  title: string
-}
+import { useTaskStore } from '../store/store'
+import RemoveTaskModal from './removeTaskModal'
 
 export default function Main (): JSX.Element {
-  const [tasks, setTasks] = useState<TTask[] | null>(API.INITIAL_TASKS)
   const [inputValue, setInputValue] = useState('')
+  const { addTask, tasks, setModalVisible, setSelectedTask } = useTaskStore()
 
-  function handleAddTask (): void {
-    const newTask: TTask[] = JSON.parse(JSON.stringify(tasks))
-    const id = nanoid()
-    newTask?.push({ id, title: inputValue })
-    setTasks(newTask)
-  }
-  function handleRemoveTask (id: string): void {
-    const newTasks: TTask[] = JSON.parse(JSON.stringify(tasks)).filter((e: TTask) => e.id !== id)
-    setTasks(newTasks)
-  }
   return (
-        <View style={styles.container}>
-            <Text style={styles.title} >Today&apos;s Tasks  </Text>
-            <StatusBar style='auto'></StatusBar>
-            <SafeAreaView style={styles.tasksList}>
-                <FlatList
-                data={tasks}
-                renderItem={({ item }) => <Task onPress={ () => { handleRemoveTask(item.id) }} >{item.title}</Task> }
-                keyExtractor={(item) => item.id }
-                >
-                </FlatList>
-            </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title} >Today&apos;s Tasks  </Text>
+      <StatusBar style='auto'></StatusBar>
 
-            {/* Write A task */}
-              <KeyboardAvoidingView style={{ marginTop: 'auto' }} >
-                <View style={{ marginTop: 'auto', display: 'flex', flexDirection: 'row', gap: 14, alignItems: 'center', justifyContent: 'space-between' }}>
-                  <TextInput value={inputValue} onChangeText={(e) => { setInputValue(e) } }
-                  placeholderTextColor="#C0C0C0" placeholder='Write a task' style={styles.input}></TextInput>
-                  <TouchableOpacity disabled={inputValue.length === 0} onPress={handleAddTask} >
-                        <View style={styles.plusIcon}>
-                          <Icon size={30} name='plus' color="#C0C0C0" ></Icon>
-                        </View>
-                  </TouchableOpacity>
-                </View>
-              </KeyboardAvoidingView>
+      <View style={styles.tasksList}>
+        {tasks.length === 0
+          ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text >No tasks ...</Text></View>
+          : <FlatList
+          data={tasks}
+          renderItem={({ item }) =>
+          <Task onPress={() => {
+            setSelectedTask(item)
+            setModalVisible(true)
+          }} >{item.title}
+          </Task>}
+          keyExtractor={(item) => item.id}
+        >
+        </FlatList>}
+      </View>
+
+      {/* WRITE A TASK INPUT */}
+      <KeyboardAvoidingView style={{ marginTop: 'auto' }}>
+        <View style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 14,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 10
+
+        }}>
+          <TextInput
+            value={inputValue}
+            onChangeText={(e) => { setInputValue(e) }}
+            placeholderTextColor="#C0C0C0"
+            placeholder='Write a task'
+            style={styles.input}></TextInput>
+          <TouchableOpacity disabled={inputValue.length === 0} onPress={() => {
+            addTask(inputValue)
+            Keyboard.dismiss()
+            setInputValue('')
+          }} >
+            <View style={styles.plusIcon}>
+              <Icon size={30} name='plus' color="#C0C0C0" ></Icon>
+            </View>
+          </TouchableOpacity>
         </View>
+      </KeyboardAvoidingView>
+      {/* MODAL */}
+      <RemoveTaskModal />
+
+    </View>
   )
 }
 

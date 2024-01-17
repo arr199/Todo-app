@@ -3,15 +3,15 @@ import { View, Text, StyleSheet, TouchableNativeFeedback } from 'react-native'
 export default function Task (props: any): JSX.Element {
   return (
 
-      <TouchableNativeFeedback {...props}>
-        <View style={styles.container} >
-            <View style={ { display: 'flex', flexDirection: 'row', alignItems: 'center' } } >
-                <View style={styles.square}></View>
-                <Text>{props.children as React.ReactNode}</Text>
-            </View>
-            <View style={styles.circle} ></View>
+    <TouchableNativeFeedback {...props}>
+      <View style={styles.container} >
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
+          <View style={styles.square}></View>
+          <Text>{props.children as React.ReactNode}</Text>
         </View>
-      </TouchableNativeFeedback>
+        <View style={styles.circle} ></View>
+      </View>
+    </TouchableNativeFeedback>
 
   )
 }
