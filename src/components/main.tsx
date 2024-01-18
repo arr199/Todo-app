@@ -1,14 +1,15 @@
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Keyboard } from 'react-native'
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Keyboard, ToastAndroid } from 'react-native'
 import Task from './task'
 import { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { useTaskStore } from '../store/store'
+import { useGlobalStore, useTaskStore } from '../store/store'
 import RemoveTaskModal from './removeTaskModal'
 
 export default function Main (): JSX.Element {
   const [inputValue, setInputValue] = useState('')
-  const { addTask, tasks, setModalVisible, setSelectedTask } = useTaskStore()
+  const { addTask, tasks } = useTaskStore()
+  const { setModalVisible, setSelectedTask } = useGlobalStore()
 
   return (
     <View style={styles.container}>
@@ -50,6 +51,7 @@ export default function Main (): JSX.Element {
             style={styles.input}></TextInput>
           <TouchableOpacity disabled={inputValue.length === 0} onPress={() => {
             addTask(inputValue)
+            ToastAndroid.show('Task added', ToastAndroid.SHORT)
             Keyboard.dismiss()
             setInputValue('')
           }} >
