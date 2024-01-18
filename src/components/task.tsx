@@ -7,7 +7,7 @@ export default function Task (props: any): JSX.Element {
       <View style={styles.container} >
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
           <View style={styles.square}></View>
-          <Text>{props.children as React.ReactNode}</Text>
+          <Text style={{ width: '80%' }}>{props.children}</Text>
         </View>
         <View style={styles.circle} ></View>
       </View>

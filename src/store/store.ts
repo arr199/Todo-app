@@ -14,6 +14,7 @@ interface TaskStore {
   tasks: TTask[]
   addTask: (inputValue: string) => void
   removeTask: (id: string) => void
+  setTasks: (tasks: TTask[]) => void
 
 }
 
@@ -35,6 +36,9 @@ export const useTaskStore = create<TaskStore>()(persist((set) => ({
     set((state) => {
       return { ...state, tasks: state.tasks.filter((e: TTask) => e.id !== id) }
     })
+  },
+  setTasks: (tasks: TTask[]) => {
+    set((state) => ({ ...state, tasks }))
   }
 
 }), { name: 'tasks', storage: createJSONStorage(() => AsyncStorage) }))

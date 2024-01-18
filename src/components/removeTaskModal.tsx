@@ -13,25 +13,29 @@ export default function RemoveTaskModal (): JSX.Element {
     animationType="slide"
     transparent={true}
     visible={modalVisible}
+
     onRequestClose={() => {
       setModalVisible(false)
     }}>
       <View style={styles.modalView}>
         <Text style={{ fontWeight: '600', fontSize: 20 }}>Do you want to remove the task ? </Text>
         <View style={{ marginTop: 20, display: 'flex', justifyContent: 'center', flexDirection: 'row', gap: 20 }}>
+
           {/* YES BUTTON */}
-          <TouchableNativeFeedback onPress={() => {
-            ToastAndroid.showWithGravity('Task removed', ToastAndroid.SHORT, ToastAndroid.CENTER)
-            removeTask(id)
-            setModalVisible(false)
-          }} >
-            <View style={{ backgroundColor: '#0077ff', paddingVertical: 5, paddingHorizontal: 20 }}>
+          <TouchableNativeFeedback
+            onPress={() => {
+              ToastAndroid.showWithGravity('Task removed', ToastAndroid.SHORT, ToastAndroid.CENTER)
+              removeTask(id)
+              setModalVisible(false)
+            }} >
+            <View style={styles.yesButton}>
               <Text style={{ fontWeight: 'bold', color: 'white' }} >Yes</Text>
             </View>
           </TouchableNativeFeedback>
+
         {/* NO BUTTON */}
           <TouchableNativeFeedback onPress={() => { setModalVisible(false) }} >
-            <View style={{ backgroundColor: '#0077ff', paddingVertical: 5, paddingHorizontal: 20 }}>
+            <View style={styles.noButton}>
               <Text style={{ fontWeight: 'bold', color: 'white' }} >No</Text>
             </View>
           </TouchableNativeFeedback>
@@ -52,5 +56,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     fontWeight: '600'
 
-  }
+  },
+  yesButton: { backgroundColor: 'red', paddingVertical: 10, paddingHorizontal: 40, borderRadius: 5 },
+  noButton: { backgroundColor: '#0077ff', paddingVertical: 10, paddingHorizontal: 40, borderRadius: 5 },
+  red: { backgroundColor: 'red' }
 })

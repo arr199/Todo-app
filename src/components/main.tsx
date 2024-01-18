@@ -1,14 +1,16 @@
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Keyboard, ToastAndroid } from 'react-native'
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Keyboard, ToastAndroid } from 'react-native'
 import Task from './task'
 import { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { useGlobalStore, useTaskStore } from '../store/store'
 import RemoveTaskModal from './removeTaskModal'
+import DraggableFlatList from 'react-native-draggable-flatlist'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 export default function Main (): JSX.Element {
   const [inputValue, setInputValue] = useState('')
-  const { addTask, tasks } = useTaskStore()
+  const { addTask, tasks, setTasks } = useTaskStore()
   const { setModalVisible, setSelectedTask } = useGlobalStore()
 
   return (
@@ -19,17 +21,24 @@ export default function Main (): JSX.Element {
       <View style={styles.tasksList}>
         {tasks.length === 0
           ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text >No tasks ...</Text></View>
-          : <FlatList
-          data={tasks}
-          renderItem={({ item }) =>
-          <Task onPress={() => {
-            setSelectedTask(item)
-            setModalVisible(true)
-          }} >{item.title}
-          </Task>}
+          : <GestureHandlerRootView>
+          <DraggableFlatList
           keyExtractor={(item) => item.id}
+          onDragEnd={({ data }) => { setTasks(data) } }
+          data={tasks}
+          renderItem={({ item, drag, isActive }) =>
+            <Task
+            onLongPress={drag}
+            onPress={() => {
+              setSelectedTask(item)
+              setModalVisible(true)
+            }} >{item.title}
+            </Task>}
         >
-        </FlatList>}
+        </DraggableFlatList>
+        </GestureHandlerRootView>
+
+        }
       </View>
 
       {/* WRITE A TASK INPUT */}
